@@ -21,7 +21,24 @@ namespace Assets.Scripts.Views
         [SerializeField]
         private RectTransform cell;
 
+        
+
+
         public void Start()
+        {
+            SpawnGrid();
+            
+
+        }
+
+        public void Update()
+        {
+            InputController();
+
+
+        }
+
+        private void SpawnGrid()
         {
             grid = Instantiate(grid, transform);
             var width = grid.sizeDelta.x;
@@ -42,13 +59,14 @@ namespace Assets.Scripts.Views
             {
                 for (int j = 0; j < Size; j++)
                 {
-                    cell = Instantiate(cell, grid.transform);
-                    cell.localPosition = position;
+                    var newCell = Instantiate(cell, grid.transform);
+                    newCell.localPosition = position;
                     position.x += widthCell;
-                    text = cell.GetComponentInChildren<Text>();
+                    text = newCell.GetComponentInChildren<Text>();
                     if (count == Size * Size)
                     {
                         text.text = "";
+                        newCell.gameObject.SetActive(false);
                         continue;
                     }
                     text.text = count++.ToString();
@@ -58,12 +76,87 @@ namespace Assets.Scripts.Views
             }
 
             GameController.OnStart(Size, Size, Id, Name);
-            
         }
 
-        public void Update()
+        private void InputController()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                var index = GameController.GetIndexOfEmptyCell();
+                var cell = grid.GetChild(index);
+                Debug.Log("Index: " + index);
+                if (index > Size - 1)
+                {
+                    var upIndex = index - Size;
+                    Debug.Log("leftIndex: " + upIndex);
+                    var cellUp = grid.GetChild(upIndex);
+
+                    var text1 = cell.GetComponentInChildren<Text>();
+                    var text2 = cellUp.GetComponentInChildren<Text>();
+                    var tmp = text1.text;
+                    text1.text = text2.text;
+                    text2.text = tmp;
+
+                    cell.gameObject.SetActive(true);
+                    cellUp.gameObject.SetActive(false);
+
+                    GameController.SwapCells(index, upIndex);
+                }
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                var index = GameController.GetIndexOfEmptyCell();
+                var cell = grid.GetChild(index);
+                Debug.Log("Index: " + index);
+                if (index % Size != Size - 1)
+                {
+                    var rightIndex = index + 1;
+                    Debug.Log("leftIndex: " + rightIndex);
+                    var cellRight = grid.GetChild(rightIndex);
+
+                    var text1 = cell.GetComponentInChildren<Text>();
+                    var text2 = cellRight.GetComponentInChildren<Text>();
+                    var tmp = text1.text;
+                    text1.text = text2.text;
+                    text2.text = tmp;
+
+                    cell.gameObject.SetActive(true);
+                    cellRight.gameObject.SetActive(false);
+
+                    GameController.SwapCells(index, rightIndex);
+                }
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                var index = GameController.GetIndexOfEmptyCell();
+                var cell = grid.GetChild(index);
+                Debug.Log("Index: " + index);
+                if (index < Size * (Size - 1))
+                {
+                    var downIndex = index + Size;
+                    Debug.Log("leftIndex: " + downIndex);
+                    var cellDown = grid.GetChild(downIndex);
+
+                    var text1 = cell.GetComponentInChildren<Text>();
+                    var text2 = cellDown.GetComponentInChildren<Text>();
+                    var tmp = text1.text;
+                    text1.text = text2.text;
+                    text2.text = tmp;
+
+                    cell.gameObject.SetActive(true);
+                    cellDown.gameObject.SetActive(false);
+
+                    GameController.SwapCells(index, downIndex);
+                }
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 var index = GameController.GetIndexOfEmptyCell();
                 var cell = grid.GetChild(index);
@@ -80,51 +173,36 @@ namespace Assets.Scripts.Views
                     text1.text = text2.text;
                     text2.text = tmp;
 
+                    cell.gameObject.SetActive(true);
+                    cellLeft.gameObject.SetActive(false);
+
                     GameController.SwapCells(index, leftIndex);
                 }
             }
-            if (Input.GetKeyDown(KeyCode.S))
+
+
+
+
+
+        }
+
+
+        private bool IsCorrectGrid()
+        {
+            var check = false;
+
+            for(int i = 0; i < Size; i++)
             {
-                var index = GameController.GetIndexOfEmptyCell();
-                var cell = grid.GetChild(index);
-                Debug.Log("Index: " + index);
-                if (index < Size * Size - 1)
-                {
-                    var downIndex = index + Size;
-                    Debug.Log("leftIndex: " + downIndex);
-                    var cellLeft = grid.GetChild(downIndex);
-
-                    var text1 = cell.GetComponentInChildren<Text>();
-                    var text2 = cellLeft.GetComponentInChildren<Text>();
-                    var tmp = text1.text;
-                    text1.text = text2.text;
-                    text2.text = tmp;
-
-                    GameController.SwapCells(index, downIndex);
-                }
 
             }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                var index = GameController.GetIndexOfEmptyCell();
-                var cell = grid.GetChild(index);
-                Debug.Log("Index: " + index);
-                if (index % Size != Size - 1)
-                {
-                    var rightIndex = index + 1;
-                    Debug.Log("leftIndex: " + rightIndex);
-                    var cellLeft = grid.GetChild(rightIndex);
 
-                    var text1 = cell.GetComponentInChildren<Text>();
-                    var text2 = cellLeft.GetComponentInChildren<Text>();
-                    var tmp = text1.text;
-                    text1.text = text2.text;
-                    text2.text = tmp;
 
-                    GameController.SwapCells(index, rightIndex);
-                }
+            return check;
+        }
 
-            }
+        private void Mixing()
+        {
+
         }
 
     }

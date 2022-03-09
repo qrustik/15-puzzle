@@ -125,27 +125,6 @@ namespace Assets.Scripts.Views
                 }
 
             }
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                var index = GameController.GetIndexOfEmptyCell();
-                var cell = grid.GetChild(index);
-                Debug.Log("Index: " + index);
-                if (index > Size - 1)
-                {
-                    var upIndex = index - Size;
-                    Debug.Log("leftIndex: " + upIndex);
-                    var cellLeft = grid.GetChild(upIndex);
-
-                    var text1 = cell.GetComponentInChildren<Text>();
-                    var text2 = cellLeft.GetComponentInChildren<Text>();
-                    var tmp = text1.text;
-                    text1.text = text2.text;
-                    text2.text = tmp;
-
-                    GameController.SwapCells(index, upIndex);
-                }
-
-            }
         }
 
     }
